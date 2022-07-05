@@ -18,25 +18,25 @@ const users = [
 exports.login = async (req, res) => {
   try {
     const { emailAddress, password } = req.body;
-    let token, user = null;
-    if (emailAddress && password) {
-      user = users.find((user) => {
-        return user.emailAddress === emailAddress;
-      });
-      if (user) {
-        if (user.password === password) {
-          const { privateKey } = process.env;
-          token = jwt.sign({ emailAddress: user.emailAddress }, privateKey, { expiresIn: '1h' });
-          return res.json({ token: token, emailAddress: user.emailAddress });
-        } else {
-          return res.status(401).json({ field: 'password', error: 'Password is incorrect' });
-        }
-      } else {
-        return res.status(401).json({ field: 'emailAddress', error: 'Email Address is incorrect' });
-      }
-    } else {
-      return res.sendStatus(401);
+
+    if (!emailAddress || !password) {
+      return res.sendStatus(400);
     }
+
+    const user = users.find((user) => user.emailAddress === emailAddress);
+
+    if (!user) {
+      return res.status(400).json({ field: 'emailAddress', error: 'Email Address is incorrect' });
+    }
+
+    if (user.password !== password) {
+      return res.status(400).json({ field: 'password', error: 'Password is incorrect' });
+    }
+
+    const { privateKey } = process.env;
+    const token = jwt.sign({ emailAddress: user.emailAddress }, privateKey, { expiresIn: '1h' });
+
+    return res.json({ token: token, emailAddress: user.emailAddress });
   }
   catch (err) {
     console.log(err);
