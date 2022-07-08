@@ -1,5 +1,7 @@
 const routes = require('express').Router();
-const { login } = require('./controllers');
+const { login, currentSession, medications } = require('./controllers');
 //routes
-routes.post('/login', login);
+routes.post('/auth/login', login);
+routes.get('/auth/session/current', currentSession);
+routes.get('/medications', medications);
 module.exports = routes;
