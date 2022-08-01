@@ -1,6 +1,6 @@
 const routes = require('express').Router();
-const { login, currentSession } = require('../controllers/authController');
+const authController = require('../controllers/authController');
 //routes
-routes.post('/login', login);
-routes.get('/session/current', currentSession);
+routes.post('/login', authController.login);
+routes.get('/session/current', authController.currentSession);
 module.exports = routes;

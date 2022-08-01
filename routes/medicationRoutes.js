@@ -1,6 +1,11 @@
 const routes = require('express').Router();
-const { verifyToken, medications } = require('../controllers/medicationController');
+const medicationController = require('../controllers/medicationController');
 //routes
-routes.use(verifyToken);
-routes.get('/medications', medications);
+routes.use(medicationController.verifyToken);
+routes.get('/medications', medicationController.getMedications);
+routes.post('/medications', medicationController.postMedication);
+routes.get('/medications/:id', medicationController.getMedication);
+routes.put('/medications/:id', medicationController.putMedication);
+routes.patch('/medications/:id', medicationController.patchMedication);
+routes.delete('/medications/:id', medicationController.deleteMedication);
 module.exports = routes;

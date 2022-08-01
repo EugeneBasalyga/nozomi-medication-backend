@@ -1,15 +1,19 @@
 const jwt = require('jsonwebtoken');
+const uuid = require('uuid');
 
 const users = [
   {
+    id: uuid.v4(),
     emailAddress: 'zhekabas@gmail.com',
     password: 'aboba'
   },
   {
+    id: uuid.v4(),
     emailAddress: 'test@gmail.com',
     password: '12345'
   },
   {
+    id: uuid.v4(),
     emailAddress: 'eugene@gmail.com',
     password: '99999'
   }
@@ -45,18 +49,17 @@ exports.login = async (req, res) => {
 }
 
 exports.currentSession = async (req, res) => {
-  const authorization = req.headers.authorization;
-  if (authorization) {
-    const accessToken = authorization.replace('Bearer ','');
-    const { privateKey } = process.env;
-    try {
-      const user = jwt.verify(accessToken, privateKey);
-      return res.json( { emailAddress: user.emailAddress } );
-    }
-    catch (err) {
-      console.log(err);
-      return res.sendStatus(401);
-    }
+  if (!req.headers.authorization) {
+    return res.sendStatus(401);
   }
-  return res.sendStatus(401);
+  const accessToken = req.headers.authorization.split(' ')[1];
+  const { privateKey } = process.env;
+  try {
+    const user = jwt.verify(accessToken, privateKey);
+    return res.json( { emailAddress: user.emailAddress } );
+  }
+  catch (err) {
+    console.log(err);
+    return res.sendStatus(401);
+  }
 }
