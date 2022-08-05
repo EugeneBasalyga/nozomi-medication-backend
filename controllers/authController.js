@@ -103,7 +103,7 @@ exports.register = async (req, res) => {
   }
 }
 
-exports.currentSession = async (req, res) => {
+exports.verifyToken = async (req, res, next) => {
   if (!req.headers.authorization) {
     return res.sendStatus(401);
   }
@@ -119,7 +119,8 @@ exports.currentSession = async (req, res) => {
     if (!user) {
       return res.sendStatus(401);
     }
-    return res.json( { emailAddress: user.emailAddress } );
+    req.user = user;
+    next();
   }
   catch (err) {
     console.log(err);
@@ -127,5 +128,6 @@ exports.currentSession = async (req, res) => {
   }
 }
 
-exports.users = users;
-exports.sessions = sessions;
+exports.currentSession = async (req, res) => {
+  return res.json( { emailAddress: req.user.emailAddress } );
+}

@@ -1,6 +1,4 @@
-const jwt = require('jsonwebtoken');
 const uuid = require('uuid');
-const authController = require('./authController');
 
 const medications = [
   {
@@ -31,31 +29,6 @@ const medications = [
     updatedAt: Date.now(),
   },
 ];
-
-exports.verifyToken = async (req, res, next) => {
-  if (!req.headers.authorization) {
-    return res.sendStatus(401);
-  }
-  const accessToken = req.headers.authorization.split(' ')[1];
-  const { privateKey } = process.env;
-  try {
-    jwt.verify(accessToken, privateKey);
-    const userSession = authController.sessions.find((session) => session.accessToken === accessToken);
-    if (!userSession) {
-      return res.sendStatus(401);
-    }
-    const user = authController.users.find((user) => user.id === userSession.userId);
-    if (!user) {
-      return res.sendStatus(401);
-    }
-    req.user = user;
-    next();
-  }
-  catch (err) {
-    console.log(err);
-    return res.sendStatus(401);
-  }
-}
 
 exports.getMedications = async (req, res) => {
   const userMedications = medications.filter((medication) => medication.userId === req.user.id);
