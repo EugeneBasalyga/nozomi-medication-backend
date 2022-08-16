@@ -40,11 +40,11 @@ class MedicationService {
 
     const medicationTO = {
       ...currentMedicationTO,
-      name: medicationVO.name ? medicationVO.name : currentMedicationTO.name,
-      description: medicationVO.description
+      name: medicationVO.name !== undefined ? medicationVO.name : currentMedicationTO.name,
+      description: medicationVO.description !== undefined
         ? medicationVO.description : currentMedicationTO.description,
-      count: medicationVO.count ? medicationVO.count : currentMedicationTO.count,
-      destinationCount: medicationVO.destinationCount
+      count: medicationVO.count !== undefined ? medicationVO.count : currentMedicationTO.count,
+      destinationCount: medicationVO.destinationCount !== undefined
         ? medicationVO.destinationCount : currentMedicationTO.destinationCount,
     };
 

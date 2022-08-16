@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-const ApiError = require('../exceptions/ApiError');
-const UserService = require('../../medication-service/src/modules/user/user.service');
-const UserRepository = require('../../medication-service/src/modules/user/user.repository');
-const SessionService = require('../../medication-service/src/modules/session/session.service');
-const SessionRepository = require('../../medication-service/src/modules/session/session.repository');
-const config = require('../../medication-service/src/config/config');
+const ApiError = require('../../../shared/exceptions/ApiError');
+const UserService = require('../modules/user/user.service');
+const UserRepository = require('../modules/user/user.repository');
+const SessionService = require('../modules/session/session.service');
+const SessionRepository = require('../modules/session/session.repository');
+const config = require('../config/config');
 
 const verifyToken = async (req, __res, next) => {
   if (!req.headers.authorization) {

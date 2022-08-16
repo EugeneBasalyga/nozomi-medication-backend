@@ -1,7 +1,7 @@
 const BaseController = require('../../../../shared/classes/BaseController');
 const validationSchemas = require('../../validators/schemas');
 const validate = require('../../../../shared/middleware/validationMiddleware');
-const verifyAccessToken = require('../../../../shared/middleware/verifyAccessToken');
+const verifyAccessToken = require('../../middleware/verifyAccessToken');
 const ApiError = require('../../../../shared/exceptions/ApiError');
 const paramIdValidator = require('../../../../shared/validators/paramId');
 
