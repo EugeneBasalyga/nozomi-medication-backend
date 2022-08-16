@@ -4,6 +4,8 @@
   "description": "nozomi medication",
     
   "scripts": {
+    "start:dev": "pm2 start ecosystem.config.js",
+    "start:prod": "pm2 start ecosystem.config.js --env production",
     "db:start": "docker-compose -p nozomi-medication-pg -f db/docker-compose.yml --env-file db/.env up",
     "db:start:prod": "docker-compose -p nozomi-medication-pg -f db/docker-compose.yml --env-file db/env.prod up",
     "db:migrate": "node ./db/migrate.js",
