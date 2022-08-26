@@ -93,7 +93,7 @@ class MedicationController extends BaseController {
 
     try {
       const userMedication = await this.service.medication
-        .findMedicationByUserId(id, userId);
+        .findUserMedicationById(id, userId);
       if (!userMedication) {
         return next(ApiError.NotFound(`Medication by id ${id} not found`));
       }
@@ -146,7 +146,7 @@ class MedicationController extends BaseController {
     const {id} = req.params;
 
     try {
-      await this.service.medication.deleteMedicationById(id, userId);
+      await this.service.medication.deleteUserMedicationById(id, userId);
       return res.sendStatus(204);
     } catch (err) {
       return next(err);

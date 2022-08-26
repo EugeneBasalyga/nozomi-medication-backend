@@ -1,4 +1,5 @@
 const {generateUUID} = require('../../../../shared/utils/utils');
+const ApiError = require('../../../../shared/exceptions/ApiError');
 
 class SessionService {
   constructor(repository) {
@@ -23,6 +24,14 @@ class SessionService {
     const createdSessionVO = {...createdSessionTO};
 
     return createdSessionVO;
+  }
+
+  async deleteSessionById(sessionId) {
+    const currentSession = await this.repository.session.findById(sessionId);
+    if (!currentSession) {
+      throw ApiError.NotFound(`Session with id ${sessionId} not found`);
+    }
+    await this.repository.session.deleteById(sessionId);
   }
 }
 

@@ -25,6 +25,7 @@ const verifyToken = async (req, __res, next) => {
     if (!user) {
       return next(ApiError.UnauthorizedError());
     }
+    req.session = session;
     req.user = user;
     next();
   } catch (err) {

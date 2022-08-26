@@ -11,7 +11,7 @@ class MedicationService {
     return medications;
   }
 
-  async findMedicationByUserId(id, userId) {
+  async findUserMedicationById(id, userId) {
     const medication = await this.repository.medication.findByIdAndUserId(id, userId);
     if (!medication) {
       return null;
@@ -54,7 +54,7 @@ class MedicationService {
     return updatedMedicationVO;
   }
 
-  async deleteMedicationById(id, userId) {
+  async deleteUserMedicationById(id, userId) {
     const currentMedicationTO = await this.repository.medication.findByIdAndUserId(id, userId);
     if (!currentMedicationTO) {
       throw ApiError.NotFound(`Medication with id ${id} not found`);
