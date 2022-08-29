@@ -14,6 +14,14 @@ class SessionService {
     return session;
   }
 
+  async findSessionByRefreshToken(refreshToken) {
+    const session = await this.repository.session.findByRefreshToken(refreshToken);
+    if (!session) {
+      return null;
+    }
+    return session;
+  }
+
   async createSession(sessionVO) {
     const sessionTO = {
       ...sessionVO,
@@ -24,6 +32,25 @@ class SessionService {
     const createdSessionVO = {...createdSessionTO};
 
     return createdSessionVO;
+  }
+
+  async updateSession(sessionVO) {
+    const currentsessionTO = await this.repository.session
+      .findById(sessionVO.id);
+    if (!currentsessionTO) {
+      throw ApiError.NotFound(`Session with id ${sessionVO.id} not found`);
+    }
+
+    const sessionTO = {
+      ...currentsessionTO,
+      accessToken: sessionVO.accessToken,
+      refreshToken: sessionVO.refreshToken,
+    };
+
+    const updatedSessionTO = await this.repository.session.update(sessionTO);
+    const updatedSessionVO = {...updatedSessionTO};
+
+    return updatedSessionVO;
   }
 
   async deleteSessionById(sessionId) {

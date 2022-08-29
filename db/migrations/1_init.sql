@@ -23,6 +23,9 @@ create TABLE if not EXISTS "Session"(
     "id" VARCHAR (36) PRIMARY KEY,
     "userId" VARCHAR (36) NOT NULL,
     "accessToken" VARCHAR (250) NOT NULL,
+    "refreshToken" VARCHAR (250) NOT NULL,
+    "accessTokenExpiresAt" BIGINT,
+    "refreshTokenExpiresAt" BIGINT,
     "createdAt" BIGINT,
     "updatedAt" BIGINT,
     "version" INT

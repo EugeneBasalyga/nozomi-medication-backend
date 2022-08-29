@@ -7,16 +7,16 @@ const SessionService = require('../modules/session/session.service');
 const SessionRepository = require('../modules/session/session.repository');
 const config = require('../config/config');
 
-const verifyAccessToken = async (req, __res, next) => {
-  if (!req.headers.authorization) {
+const verifyRefreshToken = async (req, __res, next) => {
+  const {refreshToken} = req.body;
+  if (!refreshToken) {
     return next(ApiError.UnauthorizedError());
   }
   const userService = new UserService({user: new UserRepository()});
   const sessionService = new SessionService({session: new SessionRepository()});
-  const accessToken = req.headers.authorization.split(' ')[1];
   try {
-    jwt.verify(accessToken, config.accessTokenPrivateKey);
-    const session = await sessionService.findSessionByAccessToken(accessToken);
+    jwt.verify(refreshToken, config.refreshTokenPrivateKey);
+    const session = await sessionService.findSessionByRefreshToken(refreshToken);
     if (!session) {
       return next(ApiError.UnauthorizedError());
     }
@@ -32,4 +32,4 @@ const verifyAccessToken = async (req, __res, next) => {
   }
 };
 
-module.exports = verifyAccessToken;
+module.exports = verifyRefreshToken;

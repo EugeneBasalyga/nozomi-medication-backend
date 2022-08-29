@@ -9,6 +9,9 @@ class SessionRepository extends BaseRepository {
         'id',
         'userId',
         'accessToken',
+        'refreshToken',
+        'accessTokenExpiresAt',
+        'refreshTokenExpiresAt',
         'createdAt',
         'updatedAt',
         'version',
@@ -19,6 +22,13 @@ class SessionRepository extends BaseRepository {
   async findByAccessToken(accessToken) {
     const resultTO = await this.entityRepository
       .findOne(this.tableName, this.columnNames, {accessToken});
+
+    return resultTO;
+  }
+
+  async findByRefreshToken(refreshToken) {
+    const resultTO = await this.entityRepository
+      .findOne(this.tableName, this.columnNames, {refreshToken});
 
     return resultTO;
   }

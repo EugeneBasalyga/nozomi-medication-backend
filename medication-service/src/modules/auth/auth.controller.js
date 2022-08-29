@@ -13,7 +13,6 @@ class AuthController extends BaseController {
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.register = this.register.bind(this);
-    this.getCurrentSession = this.getCurrentSession.bind(this);
 
     this.router.post(
       '/login',
@@ -36,27 +35,30 @@ class AuthController extends BaseController {
       ]),
       this.register,
     );
-
-    this.router.get(
-      '/session/current',
-      verifyAccessToken,
-      this.getCurrentSession,
-    );
   }
 
   async login(req, res, next) {
     const {user} = req;
 
     try {
-      const privateKey = config.privateAuthKey;
-      const accessToken = jwt.sign({email: user.email}, privateKey, {expiresIn: '1h'});
+      const accessToken = jwt.sign(
+        {email: user.email},
+        config.accessTokenPrivateKey,
+        {expiresIn: config.accessTokenExpiresIn},
+      );
+      const refreshToken = jwt.sign(
+        {email: user.email},
+        config.refreshTokenPrivateKey,
+        {expiresIn: config.refreshTokenExpiresIn},
+      );
       const session = {
         userId: user.id,
         accessToken,
+        refreshToken,
       };
       await this.service.session.createSession(session);
 
-      return res.status(200).json({accessToken, email: user.email});
+      return res.status(200).json({accessToken, refreshToken, email: user.email});
     } catch (err) {
       return next(err);
     }
@@ -76,23 +78,24 @@ class AuthController extends BaseController {
   async register(req, res, next) {
     try {
       const user = await this.service.user.createUser(req.body);
-      const privateKey = config.privateAuthKey;
-      const accessToken = jwt.sign({email: user.email}, privateKey, {expiresIn: '1h'});
+      const accessToken = jwt.sign(
+        {email: user.email},
+        config.accessTokenPrivateKey,
+        {expiresIn: config.accessTokenExpiresIn},
+      );
+      const refreshToken = jwt.sign(
+        {email: user.email},
+        config.refreshTokenPrivateKey,
+        {expiresIn: config.refreshTokenExpiresIn},
+      );
       const session = {
         userId: user.id,
         accessToken,
+        refreshToken,
       };
       await this.service.session.createSession(session);
 
-      return res.status(200).json({accessToken, email: user.email});
-    } catch (err) {
-      return next(err);
-    }
-  }
-
-  async getCurrentSession(req, res, next) {
-    try {
-      return res.status(200).json({email: req.user.email});
+      return res.status(200).json({accessToken, refreshToken, email: user.email});
     } catch (err) {
       return next(err);
     }

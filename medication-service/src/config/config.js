@@ -18,7 +18,10 @@ const config = {
     integrationApiKey: getEnvVariable('INTEGRATION_API_KEY', {isRequired: true}),
     integrationUrl: getEnvVariable('INTEGRATION_URL', {isRequired: true}),
   },
-  privateAuthKey: getEnvVariable('PRIVATE_AUTH_KEY', {isRequired: true}),
+  accessTokenPrivateKey: getEnvVariable('ACCESS_TOKEN_PRIVATE_KEY', {isRequired: true}),
+  refreshTokenPrivateKey: getEnvVariable('REFRESH_TOKEN_PRIVATE_KEY', {isRequired: true}),
+  accessTokenExpiresIn: getEnvVariable('ACCESS_TOKEN_EXPIRES_IN', {isRequired: true}),
+  refreshTokenExpiresIn: getEnvVariable('REFRESH_TOKEN_EXPIRES_IN', {isRequired: true}),
 };
 
 module.exports = config;

@@ -16,6 +16,7 @@ const UserService = require('./modules/user/user.service');
 
 const SessionRepository = require('./modules/session/session.repository');
 const SessionService = require('./modules/session/session.service');
+const SessionController = require('./modules/session/session.controller');
 
 const expressApp = express();
 
@@ -49,6 +50,7 @@ const startServer = (app) => {
   const rootRouter = express.Router();
 
   rootRouter.use('/medications', new MedicationController(service).getRouter());
+  rootRouter.use('/session', new SessionController(service).getRouter());
   rootRouter.use('/auth', new AuthController(service).getRouter());
 
   app.use(rootRouter);
