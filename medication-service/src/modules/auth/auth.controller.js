@@ -1,10 +1,8 @@
-const jwt = require('jsonwebtoken');
-
 const BaseController = require('../../../../shared/classes/BaseController');
 const validationSchemas = require('../../validators/schemas');
 const validate = require('../../../../shared/middleware/validationMiddleware');
 const verifyAccessToken = require('../../middleware/verifyAccessToken');
-const config = require('../../config/config');
+const generateTokens = require('../../shared/generateTokens');
 
 class AuthController extends BaseController {
   constructor(service) {
@@ -24,7 +22,7 @@ class AuthController extends BaseController {
 
     this.router.post(
       '/logout',
-      verifyAccessToken,
+      verifyAccessToken(service),
       this.logout,
     );
 
@@ -41,20 +39,19 @@ class AuthController extends BaseController {
     const {user} = req;
 
     try {
-      const accessToken = jwt.sign(
-        {email: user.email},
-        config.accessTokenPrivateKey,
-        {expiresIn: config.accessTokenExpiresIn},
-      );
-      const refreshToken = jwt.sign(
-        {email: user.email},
-        config.refreshTokenPrivateKey,
-        {expiresIn: config.refreshTokenExpiresIn},
-      );
+      const {
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
+      } = generateTokens(user);
+
       const session = {
         userId: user.id,
         accessToken,
         refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
       };
       await this.service.session.createSession(session);
 
@@ -78,20 +75,19 @@ class AuthController extends BaseController {
   async register(req, res, next) {
     try {
       const user = await this.service.user.createUser(req.body);
-      const accessToken = jwt.sign(
-        {email: user.email},
-        config.accessTokenPrivateKey,
-        {expiresIn: config.accessTokenExpiresIn},
-      );
-      const refreshToken = jwt.sign(
-        {email: user.email},
-        config.refreshTokenPrivateKey,
-        {expiresIn: config.refreshTokenExpiresIn},
-      );
+      const {
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
+      } = generateTokens(user);
+
       const session = {
         userId: user.id,
         accessToken,
         refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
       };
       await this.service.session.createSession(session);
 

@@ -1,9 +1,7 @@
-const jwt = require('jsonwebtoken');
-
 const BaseController = require('../../../../shared/classes/BaseController');
 const verifyAccessToken = require('../../middleware/verifyAccessToken');
 const verifyRefreshToken = require('../../middleware/verifyRefreshToken');
-const config = require('../../config/config');
+const generateTokens = require('../../shared/generateTokens');
 
 class SessionController extends BaseController {
   constructor(service) {
@@ -14,13 +12,13 @@ class SessionController extends BaseController {
 
     this.router.get(
       '/current',
-      verifyAccessToken,
+      verifyAccessToken(service),
       this.getCurrentSession,
     );
 
     this.router.post(
       '/refreshToken',
-      verifyRefreshToken,
+      verifyRefreshToken(service),
       this.refreshToken,
     );
   }
@@ -37,20 +35,21 @@ class SessionController extends BaseController {
     const {user, session} = req;
 
     try {
-      const accessToken = jwt.sign(
-        {email: user.email},
-        config.accessTokenPrivateKey,
-        {expiresIn: config.accessTokenExpiresIn},
-      );
-      const refreshToken = jwt.sign(
-        {email: user.email},
-        config.refreshTokenPrivateKey,
-        {expiresIn: config.refreshTokenExpiresIn},
-      );
-      session.accessToken = accessToken;
-      session.refreshToken = refreshToken;
-      await this.service.session.updateSession(session);
+      const {
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
+      } = generateTokens(user);
 
+      const updatedSession = {
+        ...session,
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
+      };
+      await this.service.session.updateSession(updatedSession);
       return res.status(200).json({accessToken, refreshToken});
     } catch (err) {
       return next(err);

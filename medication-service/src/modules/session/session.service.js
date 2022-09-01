@@ -45,6 +45,8 @@ class SessionService {
       ...currentsessionTO,
       accessToken: sessionVO.accessToken,
       refreshToken: sessionVO.refreshToken,
+      accessTokenExpiresAt: sessionVO.accessTokenExpiresAt,
+      refreshTokenExpiresAt: sessionVO.refreshTokenExpiresAt,
     };
 
     const updatedSessionTO = await this.repository.session.update(sessionTO);

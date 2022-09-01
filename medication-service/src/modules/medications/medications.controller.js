@@ -18,20 +18,20 @@ class MedicationController extends BaseController {
 
     this.router.get(
       '/',
-      verifyAccessToken,
+      verifyAccessToken(service),
       this.getAll,
     );
 
     this.router.get(
       '/:id',
-      verifyAccessToken,
+      verifyAccessToken(service),
       validate([paramIdValidator('id')]),
       this.getById,
     );
 
     this.router.post(
       '/',
-      verifyAccessToken,
+      verifyAccessToken(service),
       validate([
         validationSchemas.medication,
       ]),
@@ -40,7 +40,7 @@ class MedicationController extends BaseController {
 
     this.router.put(
       '/:id',
-      verifyAccessToken,
+      verifyAccessToken(service),
       validate([paramIdValidator('id')]),
       (req, __res, next) => {
         if (req.params.id !== req.body.id) {
@@ -57,7 +57,7 @@ class MedicationController extends BaseController {
 
     this.router.patch(
       '/:id',
-      verifyAccessToken,
+      verifyAccessToken(service),
       validate([paramIdValidator('id')]),
       (req, __res, next) => {
         if (req.params.id !== req.body.id) {
@@ -71,7 +71,7 @@ class MedicationController extends BaseController {
 
     this.router.delete(
       '/:id',
-      verifyAccessToken,
+      verifyAccessToken(service),
       validate([paramIdValidator('id')]),
       this.delete,
     );

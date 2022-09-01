@@ -1,4 +1,10 @@
+const {types} = require('pg');
+
 const {getStringValue, getWhereString, getValuesFromObject} = require('../utils/db');
+
+// // NOTE: Is used to automatically convert BIGINT treated by postgres as a string to number
+// //       !!! BIGINT with more than 15 digits will not be accurate as a number
+types.setTypeParser(types.builtins.INT8, parseInt);
 
 class EntityRepository {
   constructor(db) {
