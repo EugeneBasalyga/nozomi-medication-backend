@@ -15,7 +15,7 @@ const verifyRefreshToken = (services) => {
       if (session.refreshTokenExpiresAt < Date.now()) {
         return next(ApiError.UnauthorizedError());
       }
-      const user = await services.session.findUserById(session.userId);
+      const user = await services.user.findUserById(session.userId);
       if (!user) {
         return next(ApiError.UnauthorizedError());
       }

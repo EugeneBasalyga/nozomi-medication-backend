@@ -141,8 +141,8 @@ const medicationSchema = checkSchema({
         }
         const count = parseInt(req.body.count, 10);
         if (!Number.isNaN(count) && !Number.isNaN(value)) {
-          if (value <= count) {
-            throw ('Medication destination count should be greater than medication count');
+          if (value < count) {
+            throw ('Medication destination count should be not less than medication count');
           }
         }
         return true;
