@@ -1,4 +1,7 @@
+const bcrypt = require('bcrypt');
+
 const BaseController = require('../../../../shared/classes/BaseController');
+const ApiError = require('../../../../shared/exceptions/ApiError');
 const validationSchemas = require('../../validators/schemas');
 const validate = require('../../../../shared/middleware/validationMiddleware');
 const verifyAccessToken = require('../../middleware/verifyAccessToken');
@@ -36,7 +39,14 @@ class AuthController extends BaseController {
   }
 
   async login(req, res, next) {
-    const {user} = req;
+    const user = await this.service.user.findUserByEmail(req.body.email);
+    if (!user) {
+      return next(ApiError.BadRequest('', [{param: 'email', msg: 'Email address is incorrect'}]));
+    }
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!validPassword) {
+      return next(ApiError.BadRequest('', [{param: 'password', msg: 'Password is incorrect'}]));
+    }
 
     try {
       const {
@@ -73,17 +83,25 @@ class AuthController extends BaseController {
   }
 
   async register(req, res, next) {
+    const user = await this.service.user.findUserByEmail(req.body.email);
+    if (user) {
+      return next(ApiError.BadRequest('', [{param: 'email', msg: 'User with such email address already exists'}]));
+    }
+
     try {
-      const user = await this.service.user.createUser(req.body);
+      const userTO = {...req.body};
+      const salt = await bcrypt.genSalt(10);
+      userTO.password = await bcrypt.hash(userTO.password, salt);
+      const createdUser = await this.service.user.createUser(userTO);
       const {
         accessToken,
         refreshToken,
         accessTokenExpiresAt,
         refreshTokenExpiresAt,
-      } = generateTokens(user);
+      } = generateTokens(createdUser);
 
       const session = {
-        userId: user.id,
+        userId: createdUser.id,
         accessToken,
         refreshToken,
         accessTokenExpiresAt,
@@ -91,7 +109,7 @@ class AuthController extends BaseController {
       };
       await this.service.session.createSession(session);
 
-      return res.status(200).json({accessToken, refreshToken, email: user.email});
+      return res.status(200).json({accessToken, refreshToken, email: createdUser.email});
     } catch (err) {
       return next(err);
     }

@@ -2,7 +2,6 @@
   "name": "nozomi-medication-backend",
   "version": "1.0.0",
   "description": "nozomi medication",
-    
   "scripts": {
     "start:dev": "pm2 start ecosystem.config.js",
     "start:prod": "pm2 start ecosystem.config.js --env production",
@@ -23,9 +22,9 @@
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
     "jsonwebtoken": "^8.5.1",
-    "uuid": "^8.3.2",
     "pg": "^8.7.3",
-    "postgres-migrations": "^5.3.0"
+    "postgres-migrations": "^5.3.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
